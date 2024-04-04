@@ -2,9 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define FAT_TABLE_SIZE 1536
+#define FAT_TABLE_SIZE 3072
 #define TYPE_DIR 0x10
 #define TYPE_FILE 0x20
+#define DETAIL 0x789
+#define CMD_LS 0x333
+#define CMD_CAT 0x444
+#define INF 0x7fffffff
 // #define DEBUG
 
 typedef struct __attribute__((packed)) Fat12Header {
@@ -44,14 +48,15 @@ typedef struct RootEntry {
 
 typedef struct FileDir {
   char name[11];
+  char *abs_path;
   uint8_t type; // if file 0; if dir 1
   struct FileDir *parent;
   char *buf;
   uint32_t size;
-  
-  // only useful when it's directory 
+
+  // only useful when it's directory
   uint32_t dir_size;
   uint32_t file_size;
   uint32_t children_size;
-  struct FileDir *children[];
+  struct FileDir **children;
 } FileDir;
